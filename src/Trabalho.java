@@ -35,10 +35,12 @@ public class Trabalho {
         visualizarSubidaDeAgua(matrizTerrenoSubidaPorX); // alinea h)
 
         System.out.println("i)"); // alinea i)
+        calcularCoordenadasIdeaisParaCubo(matrizTerrenoSubidaPorX);
 
 
         System.out.println("j)"); // alinea j)
         encontrarCaminhoVerticalSeco(matrizTerrenoSubidaPorX); // alinea j)
+
 
 
 
@@ -67,9 +69,9 @@ public class Trabalho {
 
     public static void escreverValoresDoTerreno(int[][] matrizTerreno){ // alinea b)
         String linhaDeValores = "";
-        for (int i = 0; i < matrizTerreno.length; i++) {
+        for (int i = 0; i < matrizTerreno.length; i++){
             linhaDeValores = "";
-            for (int j = 0; j < matrizTerreno[i].length; j++) {
+            for (int j = 0; j < matrizTerreno[i].length; j++){
                 linhaDeValores = linhaDeValores + " " + matrizTerreno[i][j];
 
             }
@@ -190,6 +192,34 @@ public class Trabalho {
             System.out.println("                 " + k + " |                  " + qtTerrenosInundados);
             qtTerrenosInundados = 0;
         }
+    }
+
+    public static void calcularCoordenadasIdeaisParaCubo(int[][] matrizTerreno){ // alinea i)
+            final int ladoCubo = 3;
+            int menorTerraMobilizada = 500, terraMobilizada = 0, terraMobilizadaSingular, iIdeal = 0, jIdeal = 0;
+            for (int i = 0; i < ladoCubo; i++){
+                for (int j = 0; j < ladoCubo; j++){
+                    terraMobilizadaSingular = matrizTerreno[i][j] - (-ladoCubo);
+                    if (terraMobilizadaSingular < 0){
+                        terraMobilizadaSingular = terraMobilizadaSingular * -1;
+                    }
+                    terraMobilizada = terraMobilizada + terraMobilizadaSingular;
+                    if (terraMobilizada < menorTerraMobilizada){
+                        menorTerraMobilizada = terraMobilizada;
+                        iIdeal = i;
+                        jIdeal = j;
+                    }
+
+                }
+
+                terraMobilizada = 0;
+            }
+        System.out.println("i: " + iIdeal + " j: " + jIdeal + " terra: " + menorTerraMobilizada);
+
+
+
+
+
     }
 
     public static void encontrarCaminhoVerticalSeco(int[][] matrizTerreno){ // alinea j)
