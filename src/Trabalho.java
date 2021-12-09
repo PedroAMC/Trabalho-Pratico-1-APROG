@@ -68,21 +68,19 @@ public class Trabalho {
     }
 
     public static void escreverValoresDoTerreno(int[][] matrizTerreno){ // alinea b)
-        String linhaDeValores = "";
         for (int i = 0; i < matrizTerreno.length; i++){
-            linhaDeValores = "";
             for (int j = 0; j < matrizTerreno[i].length; j++){
-                linhaDeValores = linhaDeValores + " " + matrizTerreno[i][j];
+                System.out.printf("%3d" , matrizTerreno[i][j]);
 
             }
-            linhaDeValores = linhaDeValores.trim();
-            System.out.println(linhaDeValores);
+
+            System.out.println();
         }
     }
 
     public static int[][] subirNivelDaAguaDoTerreno(int[][] matrizTerreno){ // alinea c)
         final int X = 1;
-        int[][] matrizTerrenoPosterior = new int[matrizTerreno.length][matrizTerreno[0].length]; // inicializar nova matrix com o mesmo tamanho que a matriz original
+        int[][] matrizTerrenoPosterior = new int[matrizTerreno.length][matrizTerreno[0].length]; // inicializar nova matriz com o mesmo tamanho que a matriz original
         for (int i = 0; i < matrizTerreno.length; i++){
             for (int j = 0; j < matrizTerreno[i].length; j++){
                 matrizTerrenoPosterior[i][j] = matrizTerreno[i][j]; // copiar os valores da matriz original para a nova matriz
@@ -93,7 +91,6 @@ public class Trabalho {
                 matrizTerrenoPosterior[i][j] = matrizTerrenoPosterior[i][j] + X; // acrescenta X a todos os valores da matriz do terreno
             }
         }
-
         return matrizTerrenoPosterior;
     }
 
@@ -138,7 +135,7 @@ public class Trabalho {
     public static int calcularVolumeAguaTerreno(int[][] matrizTerreno){ // alinea f)
         int volumeAgua = 0;
         for (int i = 0; i < matrizTerreno.length; i++){
-            for (int j = 0; j < matrizTerreno[i].length; j++){
+            for (int    j = 0; j < matrizTerreno[i].length; j++){
                 if (matrizTerreno[i][j] < 0){ // se estiver submerso
                     volumeAgua = volumeAgua + (matrizTerreno[i][j] * -1);
                 }
