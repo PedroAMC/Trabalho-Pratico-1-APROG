@@ -1,9 +1,9 @@
 import java.util.Scanner;
 
 public class Trabalho {
+    static final int nivelDeAguaParaSubir = 1;
     static Scanner ler = new Scanner(System.in);
     public static void main(String[] args) {
-
 
         String nomeDoTerreno = ler.nextLine(); // alinea a)
         int[][] matrizTerreno = lerValoresDoTerreno(); // alinea a)
@@ -12,39 +12,34 @@ public class Trabalho {
         escreverValoresDoTerreno(matrizTerreno); // alinea b)
 
         System.out.println("c)"); // alinea c)
-        int[][] matrizTerrenoSubidaPorX = subirNivelDaAguaDoTerreno(matrizTerreno); //alinea c)
-        escreverValoresDoTerreno(matrizTerrenoSubidaPorX); // alinea c)
+        int[][] matrizTerrenoOriginal = copiarMatriz(matrizTerreno); // guardar a matriz original
+        subirNivelDaAguaDoTerreno(matrizTerreno, nivelDeAguaParaSubir); // alinea c)
+        escreverValoresDoTerreno(matrizTerreno); // alinea c)
 
         System.out.println("d)"); // alinea d)
-        double percentagemSubmersaDoTerreno = percentagemSubmersaDoTerreno(matrizTerrenoSubidaPorX); // alinea d)
+        double percentagemSubmersaDoTerreno = percentagemSubmersaDoTerreno(matrizTerreno); // alinea d)
         System.out.printf("area submersa: %.2f%%\n", percentagemSubmersaDoTerreno); // alinea d)
 
         System.out.println("e)"); // alinea e)
-        int variacaoDaAreaInundada = variacaoDaAguaInundada(matrizTerreno, matrizTerrenoSubidaPorX); // alinea e)
+        int variacaoDaAreaInundada = variacaoDaAguaInundada(matrizTerrenoOriginal, matrizTerreno); // alinea e)
         System.out.println("variacao da arena inundada: " + variacaoDaAreaInundada + " m2"); // alinea e)
 
         System.out.println("f)"); // alinea f)
-        int volumeAguaTerreno = calcularVolumeAguaTerreno(matrizTerrenoSubidaPorX); // alinea f)
+        int volumeAguaTerreno = calcularVolumeAguaTerreno(matrizTerreno); // alinea f)
         System.out.println("volume de agua: " + volumeAguaTerreno + " m3"); // alinea f)
 
         System.out.println("g)"); // alinea g)
-        int aguaNecessariaParaInundacaoTotal = calcularAguaNecessariaParaInundacaoTotal(matrizTerrenoSubidaPorX); // alinea g)
+        int aguaNecessariaParaInundacaoTotal = calcularAguaNecessariaParaInundacaoTotal(matrizTerreno); // alinea g)
         System.out.println("para inundacao total, subir :" + aguaNecessariaParaInundacaoTotal + " m"); // alinea g)
 
         System.out.println("h)"); // alinea h)
-        visualizarSubidaDeAgua(matrizTerrenoSubidaPorX); // alinea h)
+        visualizarSubidaDeAgua(matrizTerreno); // alinea h)
 
         System.out.println("i)"); // alinea i)
-        calcularCoordenadasIdeaisParaCubo(matrizTerrenoSubidaPorX);
-
+        calcularCoordenadasIdeaisParaCubo(matrizTerreno); // alinea i)
 
         System.out.println("j)"); // alinea j)
-        encontrarCaminhoVerticalSeco(matrizTerrenoSubidaPorX); // alinea j)
-
-
-
-
-
+        encontrarCaminhoVerticalSeco(matrizTerreno); // alinea j)
 
 
     }
@@ -78,20 +73,25 @@ public class Trabalho {
         }
     }
 
-    public static int[][] subirNivelDaAguaDoTerreno(int[][] matrizTerreno){ // alinea c)
-        final int X = 1;
+    public static int[][] copiarMatriz (int[][] matrizTerreno) { // modulo para criar uma copia de uma matriz
         int[][] matrizTerrenoPosterior = new int[matrizTerreno.length][matrizTerreno[0].length]; // inicializar nova matriz com o mesmo tamanho que a matriz original
-        for (int i = 0; i < matrizTerreno.length; i++){
-            for (int j = 0; j < matrizTerreno[i].length; j++){
+        for (int i = 0; i < matrizTerreno.length; i++) {
+            for (int j = 0; j < matrizTerreno[i].length; j++) {
                 matrizTerrenoPosterior[i][j] = matrizTerreno[i][j]; // copiar os valores da matriz original para a nova matriz
             }
-        }
-        for (int i = 0; i < matrizTerrenoPosterior.length; i++){
-            for (int j = 0; j < matrizTerrenoPosterior[i].length; j++){
-                matrizTerrenoPosterior[i][j] = matrizTerrenoPosterior[i][j] + X; // acrescenta X a todos os valores da matriz do terreno
-            }
+
         }
         return matrizTerrenoPosterior;
+    }
+
+
+    public static int[][] subirNivelDaAguaDoTerreno(int[][] matrizTerreno, int valorParaSubir){ // alinea c)
+        for (int i = 0; i < matrizTerreno.length; i++){
+            for (int j = 0; j < matrizTerreno[i].length; j++){
+                matrizTerreno[i][j] = matrizTerreno[i][j] + valorParaSubir; // acrescenta o valor a todos os valores da matriz do terreno
+            }
+        }
+        return matrizTerreno;
     }
 
     public static double percentagemSubmersaDoTerreno(int[][] matrizTerreno){ // alinea d)
@@ -135,7 +135,7 @@ public class Trabalho {
     public static int calcularVolumeAguaTerreno(int[][] matrizTerreno){ // alinea f)
         int volumeAgua = 0;
         for (int i = 0; i < matrizTerreno.length; i++){
-            for (int    j = 0; j < matrizTerreno[i].length; j++){
+            for (int j = 0; j < matrizTerreno[i].length; j++){
                 if (matrizTerreno[i][j] < 0){ // se estiver submerso
                     volumeAgua = volumeAgua + (matrizTerreno[i][j] * -1);
                 }
@@ -206,16 +206,11 @@ public class Trabalho {
                         iIdeal = i;
                         jIdeal = j;
                     }
-
                 }
 
                 terraMobilizada = 0;
             }
         System.out.println("i: " + iIdeal + " j: " + jIdeal + " terra: " + menorTerraMobilizada);
-
-
-
-
 
     }
 
