@@ -1,18 +1,20 @@
 import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Trabalho {
+    static final int ladoCubo = 3;
     static final int nivelDeAguaParaSubir = 1;
     static Scanner ler = new Scanner(System.in);
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
 
-        String nomeDoTerreno = ler.nextLine(); // alinea a)
-        int[][] matrizTerreno = lerValoresDoTerreno(); // alinea a)
+
+        int[][] matrizTerreno = armazenar(); // alinea a)
 
         System.out.println("b)"); // alinea b)
         escreverValoresDoTerreno(matrizTerreno); // alinea b)
 
         System.out.println("c)"); // alinea c)
-        int[][] matrizTerrenoOriginal = copiarMatriz(matrizTerreno); // guardar a matriz original
         subirNivelDaAguaDoTerreno(matrizTerreno, nivelDeAguaParaSubir); // alinea c)
         escreverValoresDoTerreno(matrizTerreno); // alinea c)
 
@@ -21,7 +23,7 @@ public class Trabalho {
         System.out.printf("area submersa: %.2f%%\n", percentagemSubmersaDoTerreno); // alinea d)
 
         System.out.println("e)"); // alinea e)
-        int variacaoDaAreaInundada = variacaoDaAguaInundada(matrizTerrenoOriginal, matrizTerreno); // alinea e)
+        int variacaoDaAreaInundada = variacaoDaAguaInundada(matrizTerreno, nivelDeAguaParaSubir); // alinea e)
         System.out.println("variacao da arena inundada: " + variacaoDaAreaInundada + " m2"); // alinea e)
 
         System.out.println("f)"); // alinea f)
@@ -36,7 +38,7 @@ public class Trabalho {
         visualizarSubidaDeAgua(matrizTerreno); // alinea h)
 
         System.out.println("i)"); // alinea i)
-        calcularCoordenadasIdeaisParaCubo(matrizTerreno); // alinea i)
+        calcularCoordenadasIdeaisParaCubo(matrizTerreno , ladoCubo); // alinea i)
 
         System.out.println("j)"); // alinea j)
         encontrarCaminhoVerticalSeco(matrizTerreno); // alinea j)
@@ -44,54 +46,41 @@ public class Trabalho {
 
     }
 
-    public static int[][] lerValoresDoTerreno(){ // alinea a)
-        int numeroDeLinhas, numeroDeColunas;
-        do {
-            numeroDeLinhas = ler.nextInt();
-            numeroDeColunas = ler.nextInt();
-
-        } while (numeroDeColunas <= 0 && numeroDeLinhas <= 0); // verificar que o numero de linhas e colunas são positivos
-
-        int[][] matrizTerreno = new int[numeroDeLinhas][numeroDeColunas];
-        for (int i = 0; i < matrizTerreno.length; i++){
-            for (int j = 0; j < matrizTerreno[i].length; j++){
-                matrizTerreno[i][j] = ler.nextInt(); // lê os valores de cada linha da matriz
+    public static int[][] armazenar() throws FileNotFoundException { // alinea a)
+        int numLinhas, numColunas;
+        File file = new File("ficheiro1");
+        Scanner sc = new Scanner(file);
+        String nomeDoTerreno = sc.nextLine();
+        numLinhas = sc.nextInt();
+        numColunas = sc.nextInt();
+        int[][] matriz = new int[numLinhas][numColunas];
+        for (int i = 0; i < numLinhas; i++) {
+            for (int j = 0; j < numColunas; j++) {
+                matriz[i][j] = sc.nextInt();
             }
         }
+        sc.close();
 
-        return matrizTerreno;
+        return matriz;
     }
+
 
     public static void escreverValoresDoTerreno(int[][] matrizTerreno){ // alinea b)
         for (int i = 0; i < matrizTerreno.length; i++){
             for (int j = 0; j < matrizTerreno[i].length; j++){
                 System.out.printf("%3d" , matrizTerreno[i][j]);
-
             }
-
             System.out.println();
         }
     }
 
-    public static int[][] copiarMatriz (int[][] matrizTerreno) { // modulo para criar uma copia de uma matriz
-        int[][] matrizTerrenoPosterior = new int[matrizTerreno.length][matrizTerreno[0].length]; // inicializar nova matriz com o mesmo tamanho que a matriz original
-        for (int i = 0; i < matrizTerreno.length; i++) {
-            for (int j = 0; j < matrizTerreno[i].length; j++) {
-                matrizTerrenoPosterior[i][j] = matrizTerreno[i][j]; // copiar os valores da matriz original para a nova matriz
-            }
 
-        }
-        return matrizTerrenoPosterior;
-    }
-
-
-    public static int[][] subirNivelDaAguaDoTerreno(int[][] matrizTerreno, int valorParaSubir){ // alinea c)
+    public static void subirNivelDaAguaDoTerreno(int[][] matrizTerreno, int valorParaSubir){ // alinea c)
         for (int i = 0; i < matrizTerreno.length; i++){
             for (int j = 0; j < matrizTerreno[i].length; j++){
                 matrizTerreno[i][j] = matrizTerreno[i][j] + valorParaSubir; // acrescenta o valor a todos os valores da matriz do terreno
             }
         }
-        return matrizTerreno;
     }
 
     public static double percentagemSubmersaDoTerreno(int[][] matrizTerreno){ // alinea d)
@@ -110,24 +99,16 @@ public class Trabalho {
         return percentagemSubmersa;
     }
 
-    public static int variacaoDaAguaInundada(int[][] matrizTerreno, int[][] matrizTerrenoDepoisAlteracao){ // alinea e)
-        int variacao, qtDeAreaInundadaOriginal = 0, qtDeArenaInundadaResultante = 0;
+    public static int variacaoDaAguaInundada(int[][] matrizTerreno, int nivelDaAguaSubido){ // alinea e)
+        int variacao = 0;
+
         for (int i = 0; i < matrizTerreno.length; i++){
             for (int j = 0; j < matrizTerreno[i].length; j++){
-                if (matrizTerreno[i][j] < 0){ // se estiver submerso
-                    qtDeAreaInundadaOriginal++;
+                if (matrizTerreno[i][j] >= 0 && matrizTerreno[i][j] - nivelDaAguaSubido < 0){ // verificar os valores não submersos, se estavam submersos antes da subida da água
+                    variacao--;
                 }
             }
         }
-        for (int i = 0; i < matrizTerrenoDepoisAlteracao.length; i++){
-            for (int j = 0; j < matrizTerrenoDepoisAlteracao[i].length; j++){
-                if (matrizTerrenoDepoisAlteracao[i][j] < 0){ // se estiver submerso
-                    qtDeArenaInundadaResultante++;
-                }
-            }
-        }
-
-        variacao = (qtDeAreaInundadaOriginal - qtDeArenaInundadaResultante) * -1;
 
         return variacao;
     }
@@ -191,26 +172,31 @@ public class Trabalho {
         }
     }
 
-    public static void calcularCoordenadasIdeaisParaCubo(int[][] matrizTerreno){ // alinea i)
-            final int ladoCubo = 3;
+    public static void calcularCoordenadasIdeaisParaCubo(int[][] matrizTerreno, int ladoCubo){ // alinea i)
             int menorTerraMobilizada = 500, terraMobilizada = 0, terraMobilizadaSingular, iIdeal = 0, jIdeal = 0;
-            for (int i = 0; i < ladoCubo; i++){
-                for (int j = 0; j < ladoCubo; j++){
-                    terraMobilizadaSingular = matrizTerreno[i][j] - (-ladoCubo);
-                    if (terraMobilizadaSingular < 0){
-                        terraMobilizadaSingular = terraMobilizadaSingular * -1;
+            for (int i = 0; i < matrizTerreno.length; i++){
+                for (int j = 0; j < matrizTerreno[i].length; j++){
+                    if (i+ladoCubo <= matrizTerreno.length && j+ladoCubo <= matrizTerreno[i].length){
+                        for (int k = 0; k < ladoCubo; k++) {
+                            for (int l = 0; l < ladoCubo; l++) {
+                                terraMobilizadaSingular = matrizTerreno[i+k][j+l] + ladoCubo;
+                                if (terraMobilizadaSingular < 0){
+                                    terraMobilizadaSingular = terraMobilizadaSingular * -1;
+                                }
+                                terraMobilizada = terraMobilizada + terraMobilizadaSingular;
+                            }
+                        }
                     }
-                    terraMobilizada = terraMobilizada + terraMobilizadaSingular;
-                    if (terraMobilizada < menorTerraMobilizada){
+                    if (terraMobilizada < menorTerraMobilizada && terraMobilizada != 0){
                         menorTerraMobilizada = terraMobilizada;
                         iIdeal = i;
                         jIdeal = j;
                     }
+                    terraMobilizada = 0;
                 }
 
-                terraMobilizada = 0;
             }
-        System.out.println("i: " + iIdeal + " j: " + jIdeal + " terra: " + menorTerraMobilizada);
+        System.out.println("coordenadas do cubo: (" + iIdeal + "," + jIdeal + "),    terra a mobilizar: " + menorTerraMobilizada + " m2");
 
     }
 
